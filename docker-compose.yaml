@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+
+  api:
+    restart: always
+    build: .
+    depends_on:
+      - prometheus
+      - zipkin
+    ports:
+      - "8080:8080"
+    volumes:
+      - /app/node_modules
+      - .:/app
